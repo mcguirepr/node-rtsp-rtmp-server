@@ -312,7 +312,7 @@ class RTSPServer
       # TODO dts
       rtpData = rtp.createRTPHeader
         marker: true
-        payloadType: 96
+        payloadType: 97
         sequenceNumber: stream.audioSequenceNumber
         timestamp: ts
         ssrc: null
@@ -974,7 +974,7 @@ class RTSPServer
       # TODO: sequence number should start at a random number
       rtpData = rtp.createRTPHeader
         marker: false
-        payloadType: 97
+        payloadType: 96
         sequenceNumber: stream.videoSequenceNumber
         timestamp: ts
         ssrc: null
@@ -1021,7 +1021,7 @@ class RTSPServer
     # TODO: sequence number should be started from a random number
     rtpData = rtp.createRTPHeader
       marker: marker
-      payloadType: 97
+      payloadType: 96
       sequenceNumber: stream.videoSequenceNumber
       timestamp: ts
       ssrc: null
@@ -1080,7 +1080,7 @@ class RTSPServer
     # TODO: sequence number should be started from a random number
     rtpHeader = rtp.createRTPHeader
       marker: marker
-      payloadType: 97
+      payloadType: 96
       sequenceNumber: stream.videoSequenceNumber
       timestamp: ts
       ssrc: null
@@ -1416,7 +1416,7 @@ class RTSPServer
 
         if stream.isAudioStarted
           sdpData.hasAudio          = true
-          sdpData.audioPayloadType  = 96
+          sdpData.audioPayloadType  = 97
           sdpData.audioEncodingName = 'mpeg4-generic'
           sdpData.audioClockRate    = stream.audioClockRate
           sdpData.audioChannels     = stream.audioChannels
@@ -1443,7 +1443,7 @@ class RTSPServer
 
         if stream.isVideoStarted
           sdpData.hasVideo                = true
-          sdpData.videoPayloadType        = 97
+          sdpData.videoPayloadType        = 96
           sdpData.videoEncodingName       = 'H264'  # must be H264
           sdpData.videoClockRate          = 90000  # must be 90000
           sdpData.videoProfileLevelId     = stream.videoProfileLevelId
@@ -1596,9 +1596,14 @@ class RTSPServer
         else
           ssrc = client.videoSSRC
         serverPort = "#{config.videoRTPServerPort}-#{config.videoRTCPServerPort}"
-        if (match = /;client_port=(\d+)-(\d+)/.exec req.headers.transport)?
+        if (match = /;client_port=(\d+)-(\d+)/.exec req.headers.transport)
           client.clientVideoRTPPort = parseInt match[1]
           client.clientVideoRTCPPort = parseInt match[2]
+        else if (match = /;client_port=(\d+)/.exec req.headers.transport)
+          client.clientVideoRTPPort = parseInt match[1]
+          client.clientVideoRTCPPort = client.clientVideoRTPPort + 1
+        else
+          logger.info "Client Ports Failed Both Matching RegEx"
 
       if /\bTCP\b/.test req.headers.transport
         useTCPTransport = true
@@ -2182,16 +2187,16 @@ api =
         if (not addr.internal) and (addr.family is 'IPv4')
           return addr.address
 
-    return "127.0.0.1"
+    return "0.0.0.0"
 
   getExternalIP: ->
-    return "127.0.0.1" # TODO: Fetch this from UPnP or something
+    return "0.0.0.0" # TODO: Fetch this from UPnP or something
 
   # Get local IP address which is meaningful to the
   # partner of the given socket
   getMeaningfulIPTo: (socket) ->
     if api.isLoopbackAddress socket
-      return '127.0.0.1'
+      return '0.0.0.0'
     else if api.isPrivateNetwork socket
       return api.getLocalIP()
     else
