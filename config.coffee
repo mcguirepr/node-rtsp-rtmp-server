@@ -87,7 +87,7 @@ module.exports =
   recordedApplicationName: 'file'
   recordedDir: 'file'
   loopVideos: true
-  
+  autoPlayFile: true
   ### RTMP configurations ###
 
   # If true, the server waits for the first keyframe

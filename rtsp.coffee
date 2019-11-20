@@ -1709,6 +1709,9 @@ class RTSPServer
       if not startTime? and stream.isPaused()
         startTime = stream.getCurrentPlayTime()
         logger.info "[#{TAG}:client=#{client.id}] resuming stream at #{stream.getCurrentPlayTime()}"
+      if not startTime? and config.autoPlayFile
+        startTime = 0
+        logger.info "[#{TAG}:client=#{client.id}] auto play configured, starting at 0}"
       if startTime?
         logger.info "[#{TAG}:client=#{client.id}] seek to #{startTime}"
         stream.pause()
