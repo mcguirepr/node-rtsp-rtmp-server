@@ -59,8 +59,8 @@ api =
       api.print str, raw
 
   msg: (level, str, raw=false) ->
-    if level >= logLevel
-      api.print str, raw
+    #if level >= logLevel
+    api.print str, raw
 
   # Prints message without header
   raw: (str) ->
@@ -87,6 +87,6 @@ api =
   fatal: (str, raw=false) ->
     api.msg api.LEVEL_FATAL, str, raw
 
-logLevel = api.LEVEL_INFO  # default verbosity
+logLevel = api.LEVEL_DEBUG  # default verbosity
 
 module.exports = api

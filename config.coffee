@@ -86,7 +86,8 @@ module.exports =
   # To disable this feature, comment out the following two lines.
   recordedApplicationName: 'file'
   recordedDir: 'file'
-
+  loopVideos: true
+  
   ### RTMP configurations ###
 
   # If true, the server waits for the first keyframe

@@ -2208,6 +2208,9 @@ api =
       if stream.rtspClients[client.id]?
         delete stream.rtspClients[client.id]
         stream.rtspNumClients--
+        if stream.rtspNumClients == 0 && stream.isRecorded && config.loopVideos
+          logger.debug "tearing down stream"
+          stream.teardown()
     return
 
 module.exports = api

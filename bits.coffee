@@ -211,8 +211,8 @@ class Bits
 
   read_byte: ->
     if @bit_index is 0
-      if @byte_index >= @buf.length
-        throw new Error "read_byte error: no more data"
+      # if @byte_index >= @buf.length
+      #   throw new Error "read_byte error: no more data"
       value = @buf[@byte_index++]
     else
       value = @read_bits 8

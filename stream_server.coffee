@@ -111,9 +111,28 @@ class StreamServer
 
     avstreams.on 'end', (stream) =>
       if config.enableRTSP
-        @rtspServer.sendEOS stream
+        if config.loopVideos && stream.isRecorded
+          stream.seek 0, (err, actualStartTime) ->
+            if err
+              logger.error "end reseek error: seek failed: #{err}"
+              return
+          stream.lastSentVideoTimestamp = 0
+          stream.sendVideoPacketsSinceLastKeyFrame 0, (one, two) -> 
+            stream.play()
+        else
+          @rtspServer.sendEOS stream
+      
       if config.enableRTMP or config.enableRTMPT
-        @rtmpServer.sendEOS stream
+        if config.loopVideos && stream.isRecorded
+          stream.seek 0, (err, actualStartTime) ->
+            if err
+              logger.error "end reseek error: seek failed: #{err}"
+              return
+          stream.lastSentVideoTimestamp = 0
+          stream.sendVideoPacketsSinceLastKeyFrame 0, (one, two) -> 
+            stream.play()
+        else        
+          @rtmpServer.sendEOS stream
 
     # for mp4
     avstreams.on 'audio_data', (stream, data, pts) =>
