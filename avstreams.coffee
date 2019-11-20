@@ -249,6 +249,15 @@ class MP4Stream extends AVStream
   play: ->
     @mp4File.play()
 
+  loop: -> 
+    _this = this 
+    this.seek 0, (err, actualStartTime) ->
+      if err
+        logger.error "end reseek error: seek failed: #{err}"
+        return
+    this.sendVideoPacketsSinceLastKeyFrame 0, -> 
+      _this.play()
+
   pause: ->
     @mp4File.pause()
 
