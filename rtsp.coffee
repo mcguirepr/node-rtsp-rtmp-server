@@ -1006,7 +1006,7 @@ class RTSPServer
           client.videoOctetCount += thisNalUnitLen
           if client.useTCPForVideo
             if client.useHTTP
-              if client.httpClientType is 'GET'
+              if client.httpClientType is 'GET' 
                 @sendDataByTCP client.socket, client.videoTCPDataChannel, rtpBuffer
             else
               @sendDataByTCP client.socket, client.videoTCPDataChannel, rtpBuffer
@@ -1227,6 +1227,12 @@ class RTSPServer
 
 
     """.replace /\n/g, "\r\n"
+    if process.env.PELCO_MODE 
+      logger.warn "--- BEWARE OF PELCO ---"
+    if process.env.PELCO_MODE and  parseInt(req.headers.cseq) >= 50
+      socket.destroy('pelco')
+      logger.warn "--- PELCO STRIKES ---"
+      return
     callback null, res
 
   respondPost: (socket, req, callback) ->

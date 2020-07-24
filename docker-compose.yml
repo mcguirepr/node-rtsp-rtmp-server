@@ -1,0 +1,27 @@
+version: '2.0'
+services:
+  rtsp:
+    image: node-rtsp-rtmp-server:latest
+    ports:
+    - "5540:5540"
+    networks:
+    - rtsp
+    volumes:
+    - ./file:/app/file/
+    environment:
+    - PELCO_MODE=1
+  ffmpeg:
+    image: jrottenberg/ffmpeg:4.1-alpine
+    entrypoint: /app/ffmpeg.sh
+    volumes: 
+    - ./ffmpeg.sh:/app/ffmpeg.sh
+    - ./file:/app/files/
+    networks:
+    - rtsp
+  nanordr:
+    image: nanordr-dev:latest
+    networks:
+    - rtsp
+networks:
+  rtsp:
+    driver: bridge
